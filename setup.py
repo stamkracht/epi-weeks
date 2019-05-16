@@ -1,5 +1,9 @@
 from setuptools import setup, find_packages
-import pathlib
+
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
 
 here = pathlib.Path(__file__).parent
 readme = (here / "README.rst").read_text(encoding="utf-8")
@@ -25,6 +29,7 @@ setup(
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
@@ -36,5 +41,6 @@ setup(
     py_modules=[module.stem for module in here.glob("src/*.py")],
     package_dir={"": "src"},
     include_package_data=True,
-    python_requires=">=3.5",
+    install_requires=['typing;python_version<"3.5"'],
+    setup_requires=['pathlib2;python_version<"3"'],
 )
