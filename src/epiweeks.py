@@ -175,6 +175,34 @@ class Week:
         for day in range(0, 7):
             yield startdate + timedelta(days=day)
 
+    def monday(self):
+        d = _method_adjustment(self._method)
+        return self.startdate() + timedelta(days=d)
+
+    def tuesday(self):
+        d = 1 + _method_adjustment(self._method)
+        return self.startdate() + timedelta(days=d)
+
+    def wednesday(self):
+        d = 2 + _method_adjustment(self._method)
+        return self.startdate() + timedelta(days=d)
+
+    def thursday(self):
+        d = 3 + _method_adjustment(self._method)
+        return self.startdate() + timedelta(days=d)
+
+    def friday(self):
+        d = 4 + _method_adjustment(self._method)
+        return self.startdate() + timedelta(days=d)
+
+    def saturday(self):
+        d = 5 + _method_adjustment(self._method)
+        return self.startdate() + timedelta(days=d)
+
+    def sunday(self):
+        d = 0 if _method_adjustment(self._method) else 6
+        return self.startdate() + timedelta(days=d)
+
 
 class Year:
     """A Year object represents a year in epidemiological week calendar
