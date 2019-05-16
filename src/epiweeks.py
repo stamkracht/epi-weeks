@@ -217,6 +217,27 @@ class Week:
         diff = (_system_adjustment(self._system) + weekday) % 7
         return self.startdate() + timedelta(days=diff)
 
+    def monday(self):
+        return self.daydate(0)
+
+    def tuesday(self):
+        return self.daydate(1)
+
+    def wednesday(self):
+        return self.daydate(2)
+
+    def thursday(self):
+        return self.daydate(3)
+
+    def friday(self):
+        return self.daydate(4)
+
+    def saturday(self):
+        return self.daydate(5)
+
+    def sunday(self):
+        return self.daydate(6)
+
 
 class Year:
     """A Year object represents a year in epidemiological week calendar."""
