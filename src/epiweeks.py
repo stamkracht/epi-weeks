@@ -76,8 +76,7 @@ class Week:
         if not isinstance(other, int):
             raise TypeError("second operand must be 'int'")
         new_date = self.startdate() + timedelta(weeks=other)
-        year, month, day = new_date.timetuple()[:3]
-        return Week.fromdate(year, month, day, self._method)
+        return Week.fromdate(new_date, self._method)
 
     def __sub__(self, other):
         # type: (int) -> "Week"
@@ -128,8 +127,7 @@ class Week:
         :type method: str
         """
 
-        year, month, day = date.today().timetuple()[:3]
-        return cls.fromdate(year, month, day, method)
+        return cls.fromdate(date.today(), method)
 
     @property
     def year(self):
