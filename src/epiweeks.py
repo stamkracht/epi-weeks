@@ -90,6 +90,9 @@ class Week:
             raise TypeError("tested operand must be 'date' object")
         return other in self.iterdates()
 
+    def __hash__(self):
+        return hash((self.year, self.week, self.method))
+
     @classmethod
     def fromdate(cls, date_obj, method="cdc"):
         # type : (date, str) -> Week
