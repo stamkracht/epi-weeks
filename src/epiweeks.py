@@ -47,6 +47,9 @@ class Week:
             raise TypeError("second operand must be 'Week' object")
         return self.weektuple() == other.weektuple()
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __gt__(self, other):
         # type: (object) -> bool
         if not isinstance(other, Week):
