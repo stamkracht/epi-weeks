@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from datetime import date, timedelta
 from typing import Tuple, Iterator
 
