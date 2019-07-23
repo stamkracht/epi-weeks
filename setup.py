@@ -1,19 +1,47 @@
 from setuptools import setup, find_packages
 
-try:
-    import pathlib
-except ImportError:
-    import pathlib2 as pathlib
 
-here = pathlib.Path(__file__).parent
-readme = (here / "README.rst").read_text(encoding="utf-8")
-changelog = (here / "CHANGELOG.rst").read_text(encoding="utf-8")
+def get_here():
+    try:
+        import pathlib
+    except ImportError:
+        import pathlib2 as pathlib
+
+    here = pathlib.Path(__file__).parent
+    return here
+
+
+class LongDescription(object):
+    def __str__(self):
+        here = get_here()
+        readme = (here / "README.rst").read_text(encoding="utf-8")
+        changelog = (here / "CHANGELOG.rst").read_text(encoding="utf-8")
+        return readme + "\n" + changelog
+
+    def __unicode__(self):
+        raise Exception('unicode')
+
+
+class PyModules(object):
+    @property
+    def data(self):
+        here = get_here()
+        return [module.stem for module in here.glob("src/*.py")]
+
+    def __len__(self):
+        return len(self.data)
+
+    def __iter__(self):
+        return iter(self.data)
+
+
+
 
 setup(
     name="epiweeks",
     version="1.0.0",
     description="Epidemiological weeks by US CDC and WHO calculation methods.",
-    long_description=readme + "\n" + changelog,
+    long_description=LongDescription(),
     url="",
     project_urls={
         "Source Code": "https://github.com/dralshehri/epi-weeks",
@@ -38,7 +66,7 @@ setup(
         "Topic :: Utilities",
     ],
     keywords="epidemiology epi weeks date calendar cdc who",
-    py_modules=[module.stem for module in here.glob("src/*.py")],
+    py_modules=PyModules(),
     package_dir={"": "src"},
     include_package_data=True,
     install_requires=['typing;python_version<"3.5"'],
