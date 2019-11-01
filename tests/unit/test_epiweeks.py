@@ -13,29 +13,34 @@ def week_iso():
     return epiweeks.Week(2015, 1, system="iso")
 
 
-def test_week_representation(week_cdc, week_iso):
+@pytest.fixture(scope="module")
+def week_wnd():
+    return epiweeks.Week(2019, 47, system="wnd")
+
+
+def test_week_representation(week_cdc, week_iso, week_wnd):
     assert week_cdc.__repr__() == "Week(2015, 1, CDC)"
     assert week_iso.__repr__() == "Week(2015, 1, ISO)"
 
 
-def test_week_string(week_cdc, week_iso):
+def test_week_string(week_cdc, week_iso, week_wnd):
     assert week_cdc.__str__() == "201501"
     assert week_iso.__str__() == "2015W01"
 
 
-def test_week_hash(week_cdc, week_iso):
+def test_week_hash(week_cdc, week_iso, week_wnd):
     assert week_cdc.__hash__() == hash((2015, 1, "CDC"))
     assert week_iso.__hash__() == hash((2015, 1, "ISO"))
 
 
-def test_week_equality(week_cdc, week_iso):
+def test_week_equality(week_cdc, week_iso, week_wnd):
     assert week_cdc == epiweeks.Week(2015, 1, system="cdc")
     assert week_cdc != epiweeks.Week(2014, 1, system="cdc")
     assert week_iso == epiweeks.Week(2015, 1, system="iso")
     assert week_iso != epiweeks.Week(2014, 1, system="iso")
 
 
-def test_week_ordering(week_cdc, week_iso):
+def test_week_ordering(week_cdc, week_iso, week_wnd):
     assert week_cdc > epiweeks.Week(2014, 53, system="cdc")
     assert week_cdc >= epiweeks.Week(2015, 1, system="cdc")
     assert week_cdc < epiweeks.Week(2015, 2, system="cdc")
@@ -46,17 +51,17 @@ def test_week_ordering(week_cdc, week_iso):
     assert week_iso <= epiweeks.Week(2015, 1, system="iso")
 
 
-def test_week_addition(week_cdc, week_iso):
+def test_week_addition(week_cdc, week_iso, week_wnd):
     assert (week_cdc + 1) == epiweeks.Week(2015, 2, system="cdc")
     assert (week_iso + 1) == epiweeks.Week(2015, 2, system="iso")
 
 
-def test_week_subtracting(week_cdc, week_iso):
+def test_week_subtracting(week_cdc, week_iso, week_wnd):
     assert (week_cdc - 1) == epiweeks.Week(2014, 53, system="cdc")
     assert (week_iso - 1) == epiweeks.Week(2014, 52, system="iso")
 
 
-def test_week_containment(week_cdc, week_iso):
+def test_week_containment(week_cdc, week_iso, week_wnd):
     assert date(2015, 1, 5) in week_cdc
     assert date(2015, 1, 1) in week_iso
 
@@ -64,7 +69,7 @@ def test_week_containment(week_cdc, week_iso):
 @pytest.mark.parametrize(
     "test_input", ["__eq__", "__gt__", "__ge__", "__lt__", "__le__"]
 )
-def test_week_comparison_exception(week_cdc, week_iso, test_input):
+def test_week_comparison_exception(week_cdc, week_iso, week_wnd, test_input):
     with pytest.raises(TypeError) as e:
         getattr(week_cdc, test_input)("w")
         getattr(week_iso, test_input)("w")
@@ -85,7 +90,7 @@ def test_week_comparison_exception(week_cdc, week_iso, test_input):
         ("__contains__", "tested operand must be 'datetime.date' object"),
     ],
 )
-def test_week_operator_exception(week_cdc, week_iso, test_input, expected):
+def test_week_operator_exception(week_cdc, week_iso, week_wnd, test_input, expected):
     with pytest.raises(TypeError) as e:
         getattr(week_cdc, test_input)("w")
         getattr(week_iso, test_input)("w")
@@ -95,14 +100,18 @@ def test_week_operator_exception(week_cdc, week_iso, test_input, expected):
 @pytest.mark.parametrize(
     "test_input, expected",
     [
-        ((date(2014, 12, 28), "cdc"), (2014, 53)),
-        ((date(2014, 12, 28), "iso"), (2014, 52)),
-        ((date(2015, 1, 2), "cdc"), (2014, 53)),
-        ((date(2015, 1, 2), "iso"), (2015, 1)),
-        ((date(2016, 2, 14), "cdc"), (2016, 7)),
-        ((date(2016, 2, 14), "iso"), (2016, 6)),
-        ((date(2017, 12, 31), "cdc"), (2018, 1)),
-        ((date(2017, 12, 31), "iso"), (2017, 52)),
+        ((date(2014, 12, 28), "cdc"), ((2014, 53), "cdc")),
+        ((date(2014, 12, 28), "iso"), ((2014, 52), "iso")),
+        ((date(2015, 1, 2), "cdc"), ((2014, 53), "cdc")),
+        ((date(2015, 1, 2), "iso"), ((2015, 1), "iso")),
+        ((date(2016, 2, 14), "cdc"), ((2016, 7), "cdc")),
+        ((date(2016, 2, 14), "iso"), ((2016, 6), "iso")),
+        ((date(2017, 12, 31), "cdc"), ((2018, 1), "cdc")),
+        ((date(2017, 12, 31), "iso"), ((2017, 52), "iso")),
+        ((date(2019, 11, 13),), ((2019, 46), "cdc")),
+        ((date(2019, 11, 14),), ((2019, 46), "wnd")),
+        ((date(2019, 11, 20),), ((2019, 46), "wnd")),
+        ((date(2019, 11, 21),), ((2019, 47), "wnd")),
     ],
 )
 def test_week_fromdate(test_input, expected):
@@ -138,22 +147,22 @@ def test_week_thisweek():
     assert iso_week.startdate() == iso_startdate
 
 
-def test_week_year(week_cdc, week_iso):
+def test_week_year(week_cdc, week_iso, week_wnd):
     assert week_cdc.year == 2015
     assert week_iso.year == 2015
 
 
-def test_week_number(week_cdc, week_iso):
+def test_week_number(week_cdc, week_iso, week_wnd):
     assert week_cdc.week == 1
     assert week_iso.week == 1
 
 
-def test_week_system(week_cdc, week_iso):
+def test_week_system(week_cdc, week_iso, week_wnd):
     assert week_cdc.system == "CDC"
     assert week_iso.system == "ISO"
 
 
-def test_weektuple(week_cdc, week_iso):
+def test_weektuple(week_cdc, week_iso, week_wnd):
     assert week_cdc.weektuple() == (2015, 1)
     assert week_iso.weektuple() == (2015, 1)
 
@@ -166,17 +175,17 @@ def test_week_isoformat(week_iso):
     assert week_iso.isoformat() == "2015W01"
 
 
-def test_week_startdate(week_cdc, week_iso):
+def test_week_startdate(week_cdc, week_iso, week_wnd):
     assert week_cdc.startdate() == date(2015, 1, 4)
     assert week_iso.startdate() == date(2014, 12, 29)
 
 
-def test_week_enddate(week_cdc, week_iso):
+def test_week_enddate(week_cdc, week_iso, week_wnd):
     assert week_cdc.enddate() == date(2015, 1, 10)
     assert week_iso.enddate() == date(2015, 1, 4)
 
 
-def test_week_dates(week_cdc, week_iso):
+def test_week_dates(week_cdc, week_iso, week_wnd):
     cdc_week_dates = [
         date(2015, 1, 4),
         date(2015, 1, 5),
@@ -199,7 +208,7 @@ def test_week_dates(week_cdc, week_iso):
     assert list(week_iso.iterdates()) == iso_week_dates
 
 
-def test_week_daydate(week_cdc, week_iso):
+def test_week_daydate(week_cdc, week_iso, week_wnd):
     cdc_week_dates = [
         date(2015, 1, 5),
         date(2015, 1, 6),

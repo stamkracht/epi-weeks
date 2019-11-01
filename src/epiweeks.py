@@ -326,7 +326,7 @@ def _check_week(year: int, week: int, system: str) -> None:
 
 def _check_system(system: str) -> None:
     """Check value of week numbering system."""
-    systems = ("cdc", "iso")
+    systems = ("cdc", "iso", "wnd")
     if system.lower() not in systems:
         raise ValueError(f"system must be '{systems[0]}' or '{systems[1]}'")
 
