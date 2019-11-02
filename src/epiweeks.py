@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from typing import Tuple, Iterator
 
 
@@ -102,6 +102,8 @@ class Week:
             (default is ``cdc``)
         :type system: str
         """
+        if isinstance(date_object, datetime):
+            date_object = date_object.date()
         if date_object >= date(2019, 11, 14):
             system = "wnd"
         _check_system(system)

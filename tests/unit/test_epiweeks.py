@@ -1,6 +1,6 @@
 import pytest
 import epiweeks
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 
 @pytest.fixture(scope="module")
@@ -128,6 +128,7 @@ def test_week_operator_exception(week_cdc, week_iso, week_wnd, test_input, expec
         ((date(2019, 11, 14),), ((2019, 46), "wnd")),
         ((date(2019, 11, 20),), ((2019, 46), "wnd")),
         ((date(2019, 11, 21),), ((2019, 47), "wnd")),
+        ((datetime(2019, 11, 21, 1, 2, 3),), ((2019, 47), "wnd")),
     ],
 )
 def test_week_fromdate(test_input, expected):
