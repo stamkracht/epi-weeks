@@ -38,7 +38,9 @@ class Week:
         return f"{class_name}({self._year}, {self._week}, {self._system})"
 
     def __str__(self) -> str:
-        return self.cdcformat() if self._system == "CDC" else self.isoformat()
+        return {"CDC": self.cdcformat, "ISO": self.isoformat, "WND": self.wndformat}[
+            self._system
+        ]()
 
     def __hash__(self) -> int:
         return hash((self._year, self._week, self._system))
@@ -100,7 +102,8 @@ class Week:
             (default is ``cdc``)
         :type system: str
         """
-
+        if date_object >= date(2019, 11, 14):
+            system = "wnd"
         _check_system(system)
         year = date_object.year
         date_ordinal = date_object.toordinal()
@@ -187,6 +190,13 @@ class Week:
         """
 
         return f"{self._year:04}W{self._week:02}"
+
+    def wndformat(self) -> str:
+        """Return a string representing the week in WND format ‘YYYYww’ for
+        example ‘201908’.
+        """
+
+        return f"{self._year:04}{self._week:02}"
 
     def startdate(self) -> date:
         """Return date for first day of week."""
@@ -333,8 +343,7 @@ def _check_system(system: str) -> None:
 
 def _system_adjustment(system: str) -> int:
     """Return needed adjustment based on week numbering system."""
-    systems = ("iso", "cdc")  # Monday, Sunday
-    return systems.index(system.lower())
+    return {"iso": 0, "cdc": 1, "wnd": 4}.get(system.lower())
 
 
 def _year_start(year: int, system: str) -> int:
