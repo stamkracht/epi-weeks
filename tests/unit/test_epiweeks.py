@@ -78,23 +78,13 @@ def test_week_containment(week_cdc, week_iso, week_wnd):
     assert date(2019, 11, 24) in week_wnd
 
 
-@pytest.mark.parametrize(
-    "test_input", ["__eq__", "__gt__", "__ge__", "__lt__", "__le__"]
-)
-def test_week_comparison_exception(week_cdc, week_iso, week_wnd, test_input):
-    with pytest.raises(TypeError) as e:
-        getattr(week_cdc, test_input)("w")
-        getattr(week_iso, test_input)("w")
-        getattr(week_wnd, test_input)("w")
-    assert str(e.value) == "can't compare 'Week' to 'str'"
-    with pytest.raises(TypeError) as e:
-        getattr(week_cdc, test_input)(week_iso)
-        getattr(week_cdc, test_input)(week_wnd)
-        getattr(week_iso, test_input)(week_wnd)
-    assert (
-        str(e.value) == "can't compare 'Week' objects with different "
-        "numbering systems"
-    )
+def test_week_comparison(week_cdc, week_iso, week_wnd):
+    assert epiweeks.Week(2019, 46, system="wnd") > epiweeks.Week(2019, 46, system="cdc")
+    assert epiweeks.Week(2019, 46, system="cdc") < epiweeks.Week(2019, 46, system="wnd")
+    assert epiweeks.Week(2019, 45, system="wnd") < epiweeks.Week(2019, 46, system="cdc")
+    assert epiweeks.Week(2019, 45, system="cdc") < epiweeks.Week(2019, 46, system="wnd")
+    assert epiweeks.Week(2019, 46, system="wnd") > epiweeks.Week(2019, 45, system="cdc")
+    assert epiweeks.Week(2019, 46, system="cdc") > epiweeks.Week(2019, 45, system="wnd")
 
 
 @pytest.mark.parametrize(

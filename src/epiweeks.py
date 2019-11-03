@@ -66,13 +66,8 @@ class Week:
         other_name = type(other).__name__
         if not isinstance(other, self.__class__):
             raise TypeError(f"can't compare '{class_name}' to '{other_name}'")
-        if self._system != other._system:
-            raise TypeError(
-                f"can't compare '{class_name}' objects with different "
-                f"numbering systems"
-            )
-        x = self.weektuple()
-        y = other.weektuple()
+        x = (self.weektuple(), _system_adjustment(self._system))
+        y = (other.weektuple(), _system_adjustment(other._system))
         return 0 if x == y else 1 if x > y else -1
 
     def __add__(self, other: int) -> "Week":
