@@ -23,6 +23,8 @@ class Week:
             (default is ``True``)
         :type validate: bool
         """
+        if (year, week) >= (2019, 47):
+            system = "wnd"
 
         if validate:
             _check_year(year)

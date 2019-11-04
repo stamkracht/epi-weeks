@@ -354,8 +354,13 @@ def test_year_weeks(year_cdc, year_iso, year_wnd):
     assert list(year_iso.iterweeks()) == iso_weeks
     wnd_weeks = []
     for w in range(1, 53):
-        wnd_weeks.append(epiweeks.Week(2020, w, system="wnd"))
+        wnd_weeks.append(epiweeks.Week(2020, w))
     assert list(year_wnd.iterweeks()) == wnd_weeks
+
+
+def test_default_system():
+    assert epiweeks.Week(2019, 46).system == "CDC"
+    assert epiweeks.Week(2019, 47).system == "WND"
 
 
 def test_check_valid_week():
