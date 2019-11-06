@@ -1,6 +1,7 @@
 import pytest
 import epiweeks
 from datetime import date, timedelta, datetime
+from freezegun import freeze_time
 
 
 @pytest.fixture(scope="module")
@@ -359,7 +360,11 @@ def test_year_weeks(year_cdc, year_iso, year_wnd):
 
 
 def test_default_system():
-    assert epiweeks.Week(2019, 46).system == "CDC"
+    assert epiweeks.Week(2019, 45).system == "CDC"
+    with freeze_time("2019-11-10"):
+        assert epiweeks.Week(2019, 46).system == "CDC"
+    with freeze_time("2019-11-11"):
+        assert epiweeks.Week(2019, 46).system == "WND"
     assert epiweeks.Week(2019, 47).system == "WND"
 
 

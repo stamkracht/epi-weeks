@@ -25,6 +25,8 @@ class Week:
         """
         if (year, week) >= (2019, 47):
             system = "wnd"
+        if (year, week) == (2019, 46) and date.today() >= date(2019, 11, 11):
+            system = "wnd"
 
         if validate:
             _check_year(year)
