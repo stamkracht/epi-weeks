@@ -8,7 +8,12 @@ class Week:
     __slots__ = "_year", "_week", "_system"
 
     def __init__(
-        self, year: int, week: int, system: str = "cdc", validate: bool = True
+        self,
+        year: int,
+        week: int,
+        system: str = None,
+        validate: bool = True,
+        fromdate: date = None,
     ) -> None:
         """
         :param year: Epidemiological year
@@ -23,10 +28,19 @@ class Week:
             (default is ``True``)
         :type validate: bool
         """
-        if (year, week) >= (2019, 47):
-            system = "wnd"
-        if (year, week) == (2019, 46) and date.today() >= date(2019, 11, 11):
-            system = "wnd"
+        if system is None:
+            if fromdate is None:
+                if (year, week) >= (2019, 47):
+                    system = "wnd"
+                if (year, week) == (2019, 46) and date.today() >= date(2019, 11, 11):
+                    system = "wnd"
+            else:
+                if fromdate >= date(2019, 11, 14):
+                    system = "wnd"
+                else:
+                    system = "cdc"
+        if system is None:
+            system = "cdc"
 
         if validate:
             _check_year(year)
@@ -120,7 +134,7 @@ class Week:
                 year += 1
                 week = 0
         week += 1
-        return cls(year, week, system, validate=False)
+        return cls(year, week, system, validate=False, fromdate=date_object)
 
     @classmethod
     def fromstring(
